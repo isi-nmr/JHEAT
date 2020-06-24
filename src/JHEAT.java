@@ -20,6 +20,8 @@ import java.util.Arrays;
 public class JHEAT {
     private final GridPane frame ;
     private double[][] data;
+    private double[] vGrid;
+    private double[] hGrid;
     private ArrayList<ImageView> imageViewArrayList;
     private VBox root = new VBox();
     private int roll_width;
@@ -32,6 +34,7 @@ public class JHEAT {
     private double min;
     private Text hLabel;
     private Text vLabel;
+    private Node sideBar;
 
 
     public JHEAT(double image_width, double image_height) {
@@ -60,11 +63,6 @@ public class JHEAT {
         }
         root.getChildren().addAll(imageViewArrayList);
         frame.add(this.getRoot(),2,0,1,1);
-        Group vGrid = createVGrid(image_height);
-        Group hGrid = createHGrid(image_width);
-        frame.add(vGrid, 1,0,1,1);
-        frame.add(hGrid, 2,1,1,1);
-
         hLabel = new Text("h label");
         vLabel = new Text("v label");
         vLabel.setRotate(-90);
@@ -72,31 +70,35 @@ public class JHEAT {
 
         frame.add(hLabel,2,2,1,1);
         frame.add(vLabel,0,0,1,1);
-        Node colorBar = this.getColorBar();
-        frame.add(colorBar,3,0);
-        frame.setValignment(colorBar,VPos.CENTER);
+        sideBar = this.getColorBar();
 
-
-
+        frame.add(sideBar,3,0);
     }
-
-    private Group createHGrid(double size) {
+    public void setGrid(double[] vGrid, double[] hGrid) {
+        Group vGrids = createVGrid(vGrid);
+        Group hGrids = createHGrid(hGrid);
+        frame.setValignment(vGrids, VPos.CENTER);
+        frame.setHalignment(hGrids, HPos.CENTER);
+        frame.add(vGrids, 1,0,1,1);
+        frame.add(hGrids, 2,1,1,1);
+    }
+    private Group createHGrid(double[] hGrid) {
         Group grp = new Group();
-        for(int x=0; x<=data[0].length; x+=(data[0].length/16)) {
-            Text text = new Text(String.valueOf(x));
+        for(double value : hGrid) {
+            Text text = new Text(String.format("%.1f", value));
             text.setRotate(90);
-            double transX = x*(((size-text.getLayoutBounds().getHeight())/data[0].length));
+            double transX = value*(((image_width)/hGrid.length));
             text.setTranslateX(transX);
             grp.getChildren().add(text);
         }
         return grp;
     }
 
-    private Group createVGrid(double size) {
+    private Group createVGrid(double[] vGrid) {
         Group grp = new Group();
-        for(int y=0; y<data.length; y++) {
-            Text text = new Text(String.valueOf(y+1));
-            double transY = y*((size/data.length)-text.getLayoutBounds().getHeight()/(2*data.length));
+        for(double value : vGrid) {
+            Text text = new Text(String.format("%.1f", value));
+            double transY = value*((image_height/vGrid.length));
             text.setTranslateY(transY);
             grp.getChildren().add(text);
 
@@ -140,19 +142,19 @@ public class JHEAT {
         }
         ImageView imageView = new ImageView(image);
         HBox colorBarFrame = new HBox();
+        colorBarFrame.setAlignment(Pos.CENTER);
         colorBarFrame.getChildren().add(imageView);
         Group vGrid = colorBarGrid(colorbar_height);
         colorBarFrame.getChildren().add(vGrid);
-        colorBarFrame.setAlignment(Pos.CENTER);
         return colorBarFrame;
     }
 
-    private Group colorBarGrid(double image_height) {
+    private Group colorBarGrid(double colorbar_height) {
         Group grp = new Group();
-        double[] values = new double[]{min, 0, max};
+        double[] values = new double[]{min, max};
         for(double value : values) {
-            Text text = new Text("  " + String.format("%.1f", value));
-            double transY =  (1- ((value-min)/(max-min)))* image_height;
+            Text text = new Text("  " + String.format("%5.1f", value));
+            double transY =  (1- ((value-min)/(max-min))) * colorbar_height;
             text.setTranslateY(transY);
             grp.getChildren().add(text);
         }
@@ -215,6 +217,9 @@ public class JHEAT {
         return max;
     }
 
+    public Node getSideBar() {
+        return sideBar;
+    }
 
     public double getMin() {
         return min;
