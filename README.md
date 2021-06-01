@@ -1,6 +1,6 @@
 # JHEAT
 JHEAT is a Java library for generating HEAT MAP for scientific purpose
 
-# This project was supported by:
+### 🇪🇺 This project has received funding from the European Union's Horizon 2020 research and innovation program under the Marie Sklodowska-Curie grant agreement No 813120. Property rights belong to The Institute of Scientific Instruments of the Czech Academy of Sciences.
 
-European Union's Horizon 2020 research and innovation program under the Marie Sklodowska-Curie grant agreement No 813120 (INSPiRE-MED)
+Contact: amirshamaei@ISIBrno.Cz
